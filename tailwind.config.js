@@ -12,7 +12,7 @@ export default {
   ],
   daisyui: {
     themes: [
-      "retro"
+      "retro","dim"
     ],
   },
 }
