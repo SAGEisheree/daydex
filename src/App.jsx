@@ -8,7 +8,7 @@ const App = () => {
     return (
     <div className="relative h-full w-full">
       <Routes>
-        <Route path="/home" element={<RealPage />} />
+        <Route path="/" element={<RealPage />} />
         <Route path="/blog" element={<BlogPage />} />        
       </Routes>
       </div> 
