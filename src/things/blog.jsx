@@ -15,12 +15,23 @@ const BlogPage = () => {
             Added routes for better code readability and also added the  blog you are reading.
           </div>
         </div>
+
+
         <div className="p-2 mt-10 border-l-4 border-base-300">
           <p className="text-xl mb-4">28/1/2026</p>
           <div className="bg-base-200 border border-base-300 p-4">
             Changed the UI of popup and also added the note taking feature.
           </div>
         </div>
+
+        <div className="p-2 mt-10 border-l-4 border-base-300">
+          <p className="text-xl mb-4">28/1/2026</p>
+          <div className="bg-base-200 border border-base-300 p-4">
+            Changed the UI of popup and also added the note taking feature. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorem, asperiores. Expedita, rerum! Dolor nemo modi optio officia quam, eum necessitatibus nam facilis ducimus, repellat, quod accusantium deleniti. Sunt, atque aliquid.
+          </div>
+        </div>
+
+        
       </div>
     </div>
   );
