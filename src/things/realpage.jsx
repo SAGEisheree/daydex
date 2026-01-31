@@ -25,7 +25,7 @@ const RealPage = () => {
       <div className=" flex md:flex-row  flex-col">
      
         {/* ////////////////////////////  for moods card ///////////////////////////// */}
-       <div className="" >
+       <div className="h-fit" >
           <MoodCard />
         </div>
       
