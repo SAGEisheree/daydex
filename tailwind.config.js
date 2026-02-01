@@ -1,5 +1,13 @@
 /** @type {import('tailwindcss').Config} */
+import { useState } from 'react'
+
+
+const colors = ["#ece3ca"]
+
 export default {
+
+  
+
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -11,8 +19,9 @@ export default {
     require("daisyui") // Change to require
   ],
   daisyui: {
-    themes: [
-      "retro","dim"
-    ],
+      themes: ["retro","cyberpunk","aqua"
+        
+      ]
+ 
   },
 }

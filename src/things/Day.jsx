@@ -47,7 +47,7 @@ const Day = ({ name, day, items }) => {
                 onClick={() => {
                     setIsOpen(true);
                 }}
-                className={`btn btn-small text-center text-gray-900/35  ${selectedColor ? selectedColor : 'bg-transparent'}`}
+                className={`btn btn-ghost text-center text-gray-900/35  ${selectedColor ? selectedColor : 'bg-transparent'}`}
             >
                 {day}
             </button>
