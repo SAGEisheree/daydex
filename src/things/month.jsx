@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Day from './Day';
 
-const Month = () => {
+const Month = ({items}) => {
     const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const days = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
 
@@ -13,7 +13,7 @@ const Month = () => {
                     <div className="text-center font-medium text-m">{name}</div>
                     <div className="grid grid-cols-7 gap-0  mt-2">
                         {days.map((day) => (
-                            <Day key={`${name}-${day}`} name={name} day={day} />
+                            <Day key={`${name}-${day}`} name={name} day={day} items={items}/>
                         ))}
                     </div>
                 </div>

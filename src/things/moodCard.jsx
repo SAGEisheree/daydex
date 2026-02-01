@@ -3,14 +3,9 @@ import { useState } from 'react'
 
 import { Pencil} from 'lucide-react';
 
-const MoodCard = () => {
+const MoodCard = ({items, setItems}) => {
 
-  const [items, setItems] = useState([
-    { id: 1, name: "SuperGood", color: "bg-emerald-500" },
-    { id: 2, name: "Good", color: "bg-lime-500" },
-    { id: 3, name: "not bad", color: "bg-orange-500" },
-    { id: 4, name: "bad", color: "bg-red-500" },
-  ]);
+
 
   const colors = ["bg-emerald-500", "bg-lime-500", "bg-yellow-500", "bg-orange-500", "bg-red-500", "bg-rose-500", "bg-fuchsia-500", "bg-purple-500", "bg-violet-500",  "bg-blue-500", "bg-teal-500", "bg-green-500"]
 

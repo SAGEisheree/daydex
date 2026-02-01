@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import MoodCard from './moodCard';
 /////////////////      logic part ///////////////////////////////////////////////////////////
 // To save the color buttons and open popup/////////////////////////////////////////////////////////////////
 
-const Day = ({ name, day }) => {
+const Day = ({ name, day, items }) => {
 
     const storageKey = `mood-${name}-${day}`;
     const modalRef = useRef(null);
@@ -15,7 +15,8 @@ const Day = ({ name, day }) => {
 
     const pickColor = (colorClass) => {
         setSelectedColor(colorClass);
-        localStorage.setItem(storageKey, colorClass);}
+        localStorage.setItem(storageKey, colorClass);
+    }
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -55,17 +56,28 @@ const Day = ({ name, day }) => {
             {isOpen && <dialog
                 ref={modalRef}
                 onClose={() => setIsOpen(false)}
-                id={`modal-${name}-${day}`} className="modal">
+                id={`modal-${name}-${day}`}
+                className="modal">
                 <div className="modal-box h-auto pt-4 pb-0 flex md:w-xl flex-col justify-between">
 
-                    <div className="flex max-sm:flex-wrap  flex-row m-0 justify-between h-fit">
-                        <button onClick={() => pickColor('bg-emerald-500')} className='btn btn-ghost  bg-emerald-500 '>Super Good</button>
+                    {/* <div className="flex max-sm:flex-wrap  flex-row m-0 justify-between h-fit">
+                        <button onClick={() => pickColor(`items.color`)} className='btn btn-ghost  bg-emerald-500 '>Super Good</button>
                         <button onClick={() => pickColor('bg-lime-500')} className='btn btn-ghost  bg-lime-500 '>Good</button>
                         <button onClick={() => pickColor('bg-orange-500')} className='btn btn-ghost  bg-orange-500 '>Bad</button>
                         <button onClick={() => pickColor('bg-rose-500')} className='btn btn-ghost bg-rose-500  '>Very Bad</button>
                         <button onClick={() => pickColor('bg-base-200')} className='btn btn-ghost bg-base-200  '>No Color</button>
-                    </div>
-
+                    </div> */}
+                    {items.map((item) => (
+                        <div className="flex max-sm:flex-wrap flex-row m-0 justify-between">
+                        <button
+                            key={item.id}
+                            onClick={() => pickColor(item.color)}
+                            className={`btn btn-ghost w-24 ${item.color}`}
+                        >
+                            {item.name}
+                        </button>
+                        </div>
+                    ))}
 
                     <div>
                         <div className="flex flex-col max-sm:m-1 m-4 mb-0">
