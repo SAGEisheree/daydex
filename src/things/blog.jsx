@@ -1,10 +1,19 @@
+import { Link } from "react-router";
+
+
 const BlogPage = () => {
   return (
     <div className="bg-base-100 m-80 mt-10 max-md:m-8 h-screen">
-      <h1 className="text-xl md:text-3xl font-bold">Development Logs</h1>
+      <Link to="/" >
+      <div className="flex flex-row justify-between">
+        <h1 className="text-xl md:text-3xl font-bold">Development Logs</h1>
+        <button 
+        className="btn btn-ghost bg-base-200"> Back </button>
+      </div>
+      </Link>
       <p>Documenting the journey in making this project</p>
       <div className="h-screen">
-        
+
         <div className="p-2 mt-10 border-l-4 border-base-300">
           <p className="text-xl mb-4">31/1/2026</p>
           <div className="bg-base-200 border border-base-300 p-4 space-y-2">
@@ -44,7 +53,7 @@ const BlogPage = () => {
           <p className="text-xl mb-4">26/1/2026</p>
           <div className="bg-base-200 border border-base-300 p-4 space-y-2">
             <p>• Fist commit to github.</p>
-            
+
           </div>
         </div>
 

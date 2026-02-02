@@ -33,7 +33,7 @@ const RealPage = () => {
         <div className="flex flex-row ">
           <Link to="/blog">
             <button
-              className="btn btn-outline mr-4">Blog
+              className="btn btn-ghost bg-base-300/70 mr-4">Blog
             </button>
           </Link>
 
@@ -41,9 +41,10 @@ const RealPage = () => {
           onClick={() => {
                     aqua===true ? setAqua(false) : setAqua(true) 
                 }}
-          className="flex cursor-pointer pt-4 gap-2">
-            <span className="label-text">Theme</span>
+          className="flex flex-col cursor-pointer gap-0 mt-2">
             <input type="checkbox" value="synthwave" className="toggle theme-controller" />
+                        <span className="label-text">Theme</span>
+
           </label>
 
         </div>

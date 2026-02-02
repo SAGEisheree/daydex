@@ -47,7 +47,7 @@ const Day = ({ name, day, items }) => {
                 onClick={() => {
                     setIsOpen(true);
                 }}
-                className={`btn btn-ghost text-center text-gray-900/35  ${selectedColor ? selectedColor : 'bg-transparent'}`}
+                className={`btn btn-ghost text-center  ${selectedColor ? selectedColor : 'bg-transparent'}`}
             >
                 {day}
             </button>
@@ -65,19 +65,24 @@ const Day = ({ name, day, items }) => {
                         <button onClick={() => pickColor('bg-lime-500')} className='btn btn-ghost  bg-lime-500 '>Good</button>
                         <button onClick={() => pickColor('bg-orange-500')} className='btn btn-ghost  bg-orange-500 '>Bad</button>
                         <button onClick={() => pickColor('bg-rose-500')} className='btn btn-ghost bg-rose-500  '>Very Bad</button>
-                        <button onClick={() => pickColor('bg-base-200')} className='btn btn-ghost bg-base-200  '>No Color</button>
                     </div> */}
+                    <div className="flex flex-row">
                     {items.map((item) => (
                         <div className="flex max-sm:flex-wrap flex-row m-0 justify-between">
-                        <button
-                            key={item.id}
-                            onClick={() => pickColor(item.color)}
-                            className={`btn btn-ghost w-24 ${item.color}`}
-                        >
-                            {item.name}
-                        </button>
+                            <button
+                                key={item.id}
+                                onClick={() => pickColor(item.color)
+                                    
+                                }
+                                className={`btn btn-ghost w-24 ${item.color}`}
+                            >
+                                {item.name}
+                            </button>
+
                         </div>
                     ))}
+                    <button onClick={() => pickColor('bg-base-200')} className='btn btn-ghost bg-base-200  '>No Color</button>
+                    </div>
 
                     <div>
                         <div className="flex flex-col max-sm:m-1 m-4 mb-0">
