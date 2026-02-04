@@ -18,7 +18,7 @@ const RealPage = () => {
 
 
 
-const [items, setItems] = useLocalStorage('mooditems', [
+  const [items, setItems] = useLocalStorage('mooditems', [
     { id: 1, name: "SuperGood", color: "bg-emerald-500", percent: 0 },
     { id: 2, name: "Good", color: "bg-lime-500", percent: 0 },
     { id: 3, name: "Not Bad", color: "bg-orange-500", percent: 0 },
@@ -38,7 +38,7 @@ const [items, setItems] = useLocalStorage('mooditems', [
         <div className="flex flex-row ">
           <Link to="/blog">
             <button
-              className="btn btn-ghost bg-base-300/70 mr-4">Blog
+              className="btn btn-ghost bg-base-300/70 mr-4"> Dev log
             </button>
           </Link>
 
@@ -54,18 +54,20 @@ const [items, setItems] = useLocalStorage('mooditems', [
 
         </div>
       </div>
-
+      <div className="text-left">
+        <InfoPage />
+      </div>
       <div className=" flex md:flex-row  flex-col">
 
         {/* ////////////////////////////  for moods card ///////////////////////////// */}
-        <div className="h-fit" >
+        <div className="h-fit " >
           <MoodCard items={items} setItems={setItems} aqua={aqua} />
         </div>
 
         {/* /////////////////////  12 month cards /////////////////// */}
-        <div className="md:ml-14 h-full">
+        <div className=" h-full">
 
-          <InfoPage />
+
 
           <Month items={items} aqua={aqua} />
         </div>
@@ -73,7 +75,7 @@ const [items, setItems] = useLocalStorage('mooditems', [
       </div>
 
 
-      
+
     </div >
 
   )
