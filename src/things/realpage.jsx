@@ -8,6 +8,7 @@ import useLocalStorage from '../hooks/useLocalStorage.js'
 import InfoPage from './infopage.jsx'
 import logo from '../assets/logo.svg';
 
+
 const RealPage = () => {
   const [items, setItems] = useLocalStorage('mooditems', [
     { id: 1, name: "SuperGood", color: "bg-emerald-500", percent: 0 },
@@ -15,6 +16,15 @@ const RealPage = () => {
     { id: 3, name: "Not Bad", color: "bg-orange-500", percent: 0 },
     { id: 4, name: "Bad", color: "bg-red-500", percent: 0 },
   ]);
+
+
+  const [totalMoods,setTotalMoods] = useLocalStorage('totalcount',0)
+  const updateTotal = (amount) => {
+    setTotalMoods(prev => prev + amount);
+  };
+
+
+
   const [aqua, setAqua] = useLocalStorage('aquaState', false);
 
   ///////////   navbar /////////////////////////////////////////
@@ -27,11 +37,6 @@ const RealPage = () => {
       // className="min-h-screen bg-cover bg-center bg-no-repeat   bg-fixed"
       // style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-
-
-
-
-
 
         {/* bg-black/20 */}
         <div data-theme={aqua ? "aqua" : "retro"} className="font-['Kode Mono'] min-h-screen ">
@@ -48,6 +53,8 @@ const RealPage = () => {
                   className="btn btn-ghost bg-base-300/70 mr-4"> Dev log
                 </button>
               </Link>
+             
+
 
               <label
                 onClick={() => {
@@ -64,8 +71,14 @@ const RealPage = () => {
           <div className="text-left">
             <InfoPage />
           </div>
-          <div className=" flex md:flex-row  flex-col">
 
+
+          <button className="">Total days selected = { totalMoods }</button>
+
+
+
+          <div className=" flex md:flex-row  flex-col">
+           
             {/* ////////////////////////////  for moods card ///////////////////////////// */}
             <div className="h-fit " >
               <MoodCard items={items} setItems={setItems} aqua={aqua} />
@@ -76,7 +89,7 @@ const RealPage = () => {
 
 
 
-              <Month items={items} aqua={aqua} />
+              <Month items={items} updateTotal={updateTotal} aqua={aqua} />
             </div>
 
           </div>

@@ -38,7 +38,7 @@ const MoodCard = ({ items, setItems, aqua }) => {
 
           {items.map((item) => (
             <div
-
+              key={item.id}
               className={`${item.color} flex pt-3 pl-4 mb-4 h-12 flex-wrap rounded-md justify-between`}>
               <div className={`text-center text-gray-950  font-semibold `}>
                 <span className="mr-2">{item.name}</span>
@@ -53,7 +53,7 @@ const MoodCard = ({ items, setItems, aqua }) => {
 
 
               {editingId === item.id && (
-                <div className="flex flex-wrap z-10 bg-base-300 border-2 p-3 rounded-md border-gray-500 shadow-md">
+                <div className="flex flex-wrap z-10 bg-base-300 justify-center border-2 p-2 rounded-md border-gray-500 shadow-md">
                   {colors.map((e) =>
                     <button
                       key={e}
@@ -63,6 +63,9 @@ const MoodCard = ({ items, setItems, aqua }) => {
                       }
                       className={`${e} h-8 w-8 m-1 border-2 border-gray-600 rounded-md`}>
                     </button>)}
+                    <button 
+                    onClick={()=> setEditingId(null)}
+                    className="btn btn-outline">Done</button>
                 </div>
               )}
 
