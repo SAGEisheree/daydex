@@ -93,16 +93,11 @@ const Day = ({ name, day, items, updateTotal }) => {
                             />
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="btn bg-base-200 btn-small mt-2"
+                                className="btn bg-base-200 mb-6 btn-small mt-2"
                             >
                                 Done
                             </button>
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="bg-red-400 btn w-20 m-2 ml-80 max-sm:ml-56 btn-primary z-10"
-                            >
-                                Close
-                            </button>
+
                         </div>
                     </div>
                 </div>
