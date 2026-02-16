@@ -52,7 +52,7 @@ const RealPage = () => {
             <div className="flex flex-row ">
               <Link to="/blog">
                 <button
-                  className="btn btn-ghost bg-base-300/70 mr-4"> Dev log
+                  className="btn btn-ghost bg-base-300/70 mr-4"> Dev logs
                 </button>
               </Link>
 
