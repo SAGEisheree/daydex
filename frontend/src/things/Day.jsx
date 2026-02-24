@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
-import useCloudStorage from '../hooks/useCloudStorage'
 
 export const totalMoods = 0
 
@@ -11,8 +10,8 @@ const Day = ({ name, day, items, updateTotal }) => {
     const noteTextKey = `noteText-${name}-${day}`;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedMoodID, setSelectedMoodID] = useCloudStorage(storageKey, null);
-    const [noteText, setNoteText] = useCloudStorage(noteTextKey, '');
+    const [selectedMoodID, setSelectedMoodID] = useLocalStorage(storageKey, null);
+    const [noteText, setNoteText] = useLocalStorage(noteTextKey, '');
 
 
     const activeMood = items.find(item => item.id === selectedMoodID);
