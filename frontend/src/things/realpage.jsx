@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from "react-router"
 import { useState, useEffect } from 'react'
+import { SunMoon } from 'lucide-react'
 import Month from './month.jsx'
 import BlogPage from './blog.jsx'
 import MoodCard from './moodCard.jsx'
@@ -47,25 +48,22 @@ const RealPage = () => {
               className={`h-20 mt-2 w-auto brightness-0  ${aqua ? 'invert-[1]' : 'invert-[0] '} `}
               alt="Daydex Logo"
             />
-            <div className="flex flex-row ">
+            <div className="flex flex-row items-center mr-4">
               <Link to="/blog">
                 <button
-                  className="btn btn-ghost bg-base-300/70 mr-4"> Dev log
+                  className="btn btn-ghost bg-base-300/70 mr-4"
+                >
+                  Dev logs
                 </button>
               </Link>
 
-
-
-              <label
-                onClick={() => {
-                  aqua === true ? setAqua(false) : setAqua(true)
-                }}
-                className="flex flex-col cursor-pointer gap-0 mt-2">
-                <input type="checkbox" value="synthwave" className="toggle theme-controller" />
-                <span className="label-text">Theme</span>
-
-              </label>
-
+              <button
+                onClick={() => setAqua(prev => !prev)}
+                className="btn btn-ghost bg-base-300/70 p-2"
+                aria-label="Toggle theme"
+              >
+                <SunMoon className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
