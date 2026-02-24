@@ -20,6 +20,10 @@ const RealPage = () => {
   ]);
 
 
+  
+
+
+
   const [totalMoods, setTotalMoods] = useCloudStorage('totalcount', 0)
   const updateTotal = (amount) => {
     setTotalMoods(prev => prev + amount);
