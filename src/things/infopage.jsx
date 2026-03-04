@@ -5,12 +5,12 @@ const InfoPage = () => {
         <div className="h-fit md:ml-36 md:mr-36 p-4 m-3">
             <div
                 id="heading"
-                className="scale-110 px-6 py-5 md:px-8 md:py-7 flex flex-col gap-4"
+                className="bg-base-200/80  shadow-md border border-base-300 px-6 py-5 md:px-8 md:py-7 flex flex-col gap-4"
             >
-                <h1 className="text-2xl max-md:text-2xl font-extrabold leading-snug">
+                <h1 className="text-3xl max-md:text-2xl font-extrabold leading-snug">
                     An open source project with aims for:
-                    <span className="block  text-5xl mt-1">
-                        “Minimal and easy to use JOURNAL”
+                    <span className="block text-primary mt-1">
+                        “A very simple and easy to use JOURNAL”
                     </span>
                 </h1>
 

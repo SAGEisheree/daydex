@@ -40,9 +40,9 @@ const RealPage = () => {
       >
 
         {/* bg-black/20 */}
-        <div data-theme={aqua ? "aqua" : "my-light-theme"} className="font-['Sour Gummy'] min-h-screen ">
+        <div data-theme={aqua ? "aqua" : "retro"} className="font-['Sour Gummy'] min-h-screen ">
 
-          <div className="h-14 px-10 pt-6 mb-6 z-10 sticky backdrop-blur-[7px] top-0 w-full flex items-center justify-between">
+          <div className="h-14 bg-base-300/35 border-b-[1px] border-gray-400 z-10 sticky backdrop-blur-[7px] top-0 w-full flex items-center justify-between">
             <img
               src={logo}
               className={`h-20 mt-2 w-auto brightness-0  ${aqua ? 'invert-[1]' : 'invert-[0] '} `}
@@ -89,7 +89,7 @@ const RealPage = () => {
 
             <div className="flex flex-col">
               {/* /////////////////////  12 month cards /////////////////// */}
-              <div className=" border-t-4 md:ml-20 md:w-[90vw] border-gray-800 bg-base-300 h-full ">
+              <div className=" border-t-4 md:ml-20 md:w-[90vw] border-gray-500 bg-base-300 h-full ">
 
 
                <div className="text-center font-bold text-3xl">Months</div>
@@ -98,7 +98,7 @@ const RealPage = () => {
 
               {/* /////////////////////  week cards /////////////////// */}
 
-              <div className=" border-t-4 mt-10  md:w-[90vw] md:ml-20 mb-16 border-gray-800 bg-base-300 h-full ">
+              <div className=" border-t-4 mt-10  md:w-[90vw] md:ml-20 mb-16 border-gray-500 bg-base-300 h-full ">
 
 
                <div className="text-center font-bold text-3xl">Weeks</div>

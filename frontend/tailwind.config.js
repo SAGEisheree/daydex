@@ -1,27 +1,40 @@
 /** @type {import('tailwindcss').Config} */
-import { useState } from 'react'
-
-
-const colors = ["#ece3ca"]
-
 export default {
-
-  
-
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        // Adding a monospace font to match the "SOULDEX" and "Test your personality" style
+        'retro': ['"Courier New"', 'Courier', 'monospace'],
+      },
+    },
   },
   plugins: [
-    require("daisyui") // Change to require
+    require("daisyui")
   ],
   daisyui: {
-      themes: ["retro","cyberpunk","aqua","lofi"
-        
-      ]
- 
+    themes: [
+      {
+        "souldex-theme": {
+          "primary": "#000000",          // Black for the bold buttons/titles
+          "secondary": "#45BFDB",        // Your signature cyan
+          "accent": "#FAD02C",           // A playful yellow for accents
+          "neutral": "#181a2a",
+          "base-100": "#45BFDB",         // Setting the BG to your cyan
+          "base-content": "#000000",     // Text should be black by default
+          "info": "#3abff8",
+          "success": "#36d399",
+          "warning": "#fbbd23",
+          "error": "#f87272",
+
+          "--rounded-btn": "0.5rem",     // Slightly rounded like the screenshot
+          "--btn-text-case": "lowercase", // Matches the "Start test" look
+        },
+      },
+      "aqua", 
+    ],
   },
 }
