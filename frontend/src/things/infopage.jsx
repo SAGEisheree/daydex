@@ -2,10 +2,10 @@ import React from 'react'
 
 const InfoPage = () => {
     return (
-        <div className="h-fit md:ml-36 md:mr-36 p-4 m-3">
+        <div className="h-fit p-4 md:p-10">
             <div
                 id="heading"
-                className="scale-110 px-6 py-5 md:px-8 md:py-7 flex flex-col gap-4"
+                className="flex flex-col gap-4"
             >
                 <h1 className="text-2xl max-md:text-2xl font-extrabold leading-snug">
                     An open source project with aims for:

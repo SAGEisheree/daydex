@@ -1,23 +1,58 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import Day from './Day';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const Month = ({items,aqua,updateTotal}) => {
+const Month = ({ items, aqua, updateTotal }) => {
     const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const days = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
+    const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+    const scrollRef = useRef(null);
 
-    //   Getting 31 days from day.jsx ////////////////////////////////////////////////////////////////
+    const scroll = (direction) => {
+        if (scrollRef.current) {
+            const { scrollLeft, clientWidth } = scrollRef.current;
+            const scrollTo = direction === 'left' ? scrollLeft - 300 : scrollLeft + 300;
+            scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+        }
+    };
+
     return (
-        <div className="flex flex-row overflow-x-auto  justify-start [contain:layout_paint] ">
-            {names.map((name) => (
-                <div key={name} className={`flex-shrink-0 w-72 xl:w-[280px] xl:h-full h-full pb-4 shadow-md m-4 pt-[4px] bg-base-200 md:h-80 border-t-4 lg:w-80 ${aqua ? 'border-gray-300' : 'border-gray-500'}`}>
-                    <div className="text-center font-medium text-m">{name}</div>
-                    <div className="grid grid-cols-7 gap-0  mt-2">
-                        {days.map((day) => (
-                            <Day key={`${name}-${day}`} updateTotal={updateTotal} name={name} day={day} items={items}/>
-                        ))}
+        <div className="relative group/scroller">
+            {/* Scroll Buttons */}
+            <button
+                onClick={() => scroll('left')}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-3 bg-base-100/80 backdrop-blur-sm rounded-full shadow-lg border border-base-content/5 opacity-0 group-hover/scroller:opacity-100 transition-opacity duration-300 hover:bg-base-100"
+            >
+                <ChevronLeft size={24} />
+            </button>
+
+            <button
+                onClick={() => scroll('right')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-3 bg-base-100/80 backdrop-blur-sm rounded-full shadow-lg border border-base-content/5 opacity-0 group-hover/scroller:opacity-100 transition-opacity duration-300 hover:bg-base-100"
+            >
+                <ChevronRight size={24} />
+            </button>
+
+            <div
+                ref={scrollRef}
+                className="flex flex-row overflow-x-auto gap-6 p-4 no-scrollbar [contain:layout_paint]"
+            >
+                {names.map((name) => (
+                    <div
+                        key={name}
+                        className={`flex-shrink-0 w-80 rounded-2xl p-5 shadow-lg bg-base-200 transition-all duration-300 ${aqua ? 'border border-sky-400/20' : 'border border-slate-800/5'}`}
+                    >
+                        <div className="flex items-center justify-between mb-4 border-b border-base-content/5 pb-2">
+                            <span className="text-lg font-bold font-heading uppercase tracking-widest">{name}</span>
+                            <div className="w-8 h-8 rounded-lg bg-base-300/50 flex items-center justify-center text-[10px] font-bold opacity-40">31D</div>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                            {days.map((day) => (
+                                <Day key={`${name}-${day}`} updateTotal={updateTotal} name={name} day={day} items={items} />
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };

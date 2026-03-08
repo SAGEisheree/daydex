@@ -23,7 +23,17 @@ export default {
           "secondary": "#45BFDB",        // Your signature cyan
           "accent": "#FAD02C",           // A playful yellow for accents
           "neutral": "#181a2a",
-          "base-100": "#45BFDB",         // Setting the BG to your cyan
+          
+          
+          
+          "base-100": "#54d7f5ff",         // Bright, solid "Mango" orange
+  "base-200": "#7bd9eeff",         // Slightly deeper, more saturated
+  "base-300": "#8be3f7ff",
+          
+          
+          
+          
+          // Setting the BG to your cyan
           "base-content": "#000000",     // Text should be black by default
           "info": "#3abff8",
           "success": "#36d399",

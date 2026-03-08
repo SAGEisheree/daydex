@@ -69,7 +69,7 @@ const RealPage = () => {
 
           <div className="flex flex-row max-md:flex-col ">
 
-            <div className=" h-fit " >
+            <div className="h-fit md:ml-20">
               <MoodCard items={items} setItems={setItems} aqua={aqua} />
             </div>
 
@@ -82,29 +82,17 @@ const RealPage = () => {
 
 
 
-          <div className=" flex md:flex-row mt-10 md:p-10 flex-col">
+          <div className="flex flex-col mt-10 space-y-10">
+            {/* /////////////////////  12 month cards /////////////////// */}
+            <div className="md:ml-20 md:mr-20 bg-base-300 rounded-2xl shadow-xl pb-4">
+              <div className="text-center font-bold text-3xl py-4">Months</div>
+              <Month items={items} updateTotal={updateTotal} aqua={aqua} />
+            </div>
 
-            {/* ////////////////////////////  for moods card ///////////////////////////// */}
-
-
-            <div className="flex flex-col">
-              {/* /////////////////////  12 month cards /////////////////// */}
-              <div className=" border-t-4 md:ml-20 md:w-[90vw] border-gray-800 bg-base-300 h-full ">
-
-
-               <div className="text-center font-bold text-3xl">Months</div>
-                <Month items={items} updateTotal={updateTotal} aqua={aqua} />
-              </div>
-
-              {/* /////////////////////  week cards /////////////////// */}
-
-              <div className=" border-t-4 mt-10  md:w-[90vw] md:ml-20 mb-16 border-gray-800 bg-base-300 h-full ">
-
-
-               <div className="text-center font-bold text-3xl">Weeks</div>
-
-                <Week items={items} updateTotal={updateTotal} aqua={aqua} />
-              </div>
+            {/* /////////////////////  week cards /////////////////// */}
+            <div className="md:ml-20 md:mr-20 mb-16 bg-base-300 rounded-2xl shadow-xl pb-4">
+              <div className="text-center font-bold text-3xl py-4">Weeks</div>
+              <Week items={items} updateTotal={updateTotal} aqua={aqua} />
             </div>
           </div>
 
