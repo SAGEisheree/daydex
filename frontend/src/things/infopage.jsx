@@ -8,7 +8,7 @@ const InfoPage = () => {
                 className="flex flex-col gap-4"
             >
                 <h1 className="text-2xl max-md:text-2xl font-extrabold leading-snug">
-                    An open source project with aims for:
+                    An open source project which aims for:
                     <span className="block  text-5xl mt-1">
                         “Minimal and easy to use JOURNAL”
                     </span>
