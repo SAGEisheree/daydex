@@ -42,7 +42,7 @@ const RealPage = () => {
         {/* bg-black/20 */}
         <div data-theme={aqua ? "aqua" : "my-light-theme"} className="font-['Sour Gummy'] min-h-screen ">
 
-          <div className="h-14 px-10 pt-6 mb-6 z-10 sticky backdrop-blur-[7px] top-0 w-full flex items-center justify-between">
+          <div className="h-8 px-0 pt-8 mb-6 z-10 sticky backdrop-blur-[7px] top-0 w-full flex items-center justify-between">
             <img
               src={logo}
               className={`h-20 mt-2 w-auto brightness-0  ${aqua ? 'invert-[1]' : 'invert-[0] '} `}
@@ -69,13 +69,13 @@ const RealPage = () => {
 
           <div className="flex flex-row max-md:flex-col ">
 
-            <div className="h-fit md:ml-20">
-              <MoodCard items={items} setItems={setItems} aqua={aqua} />
-            </div>
-
             <div className="text-left">
               <InfoPage />
             </div>
+            <div className="h-fit scale-90 md:ml-20">
+              <MoodCard items={items} setItems={setItems} aqua={aqua} />
+            </div>
+
           </div>
 
           {/* <button className="">Total days selected = {totalMoods}</button> */}

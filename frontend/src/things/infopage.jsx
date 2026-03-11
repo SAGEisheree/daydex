@@ -7,14 +7,14 @@ const InfoPage = () => {
                 id="heading"
                 className="flex flex-col gap-4"
             >
-                <h1 className="text-2xl max-md:text-2xl font-extrabold leading-snug">
-                    An open source project which aims for:
-                    <span className="block  text-5xl mt-1">
+                <h1 className="text-6xl text-center font-extrabold leading-snug">
+                    DAYDEX
+                    <span className="block text-3xl md:text-5xl mt-1">
                         “Minimal and easy to use JOURNAL”
                     </span>
                 </h1>
 
-                <div className="space-y-3 text-base md:text-lg">
+                <div className="space-y-3 text-center text-base md:text-lg">
                     <p>
                         <span className="font-semibold">DAYDEX</span> helps storing your memories in a simple format
                         <span className="block text-xs md:text-sm opacity-70 mt-1">
