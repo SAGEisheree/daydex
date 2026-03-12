@@ -45,7 +45,7 @@ const Month = ({ items, aqua, updateTotal }) => {
                             <span className="text-lg font-bold font-heading uppercase tracking-widest">{name}</span>
                             <div className="w-8 h-8 rounded-lg bg-base-300/50 flex items-center justify-center text-[10px] font-bold opacity-40">31D</div>
                         </div>
-                        <div className="grid grid-cols-7 gap-1">
+                        <div className="grid grid-cols-7 ">
                             {days.map((day) => (
                                 <Day key={`${name}-${day}`} updateTotal={updateTotal} name={name} day={day} items={items} />
                             ))}

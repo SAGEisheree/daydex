@@ -53,7 +53,7 @@ const MoodCard = ({ items, setItems, aqua }) => {
 
 
               {editingId === item.id && (
-                <div className="flex flex-wrap z-10 bg-base-300 justify-center border-2 p-2 rounded-md border-gray-800 shadow-md">
+                <div className="flex flex-wrap absolute z-10 bg-base-300 justify-center border-2 p-2 rounded-md border-gray-800 shadow-md">
                   {colors.map((e) =>
                     <button
                       key={e}
