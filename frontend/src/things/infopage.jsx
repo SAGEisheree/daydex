@@ -2,7 +2,7 @@ import React from 'react'
 
 const InfoPage = () => {
     return (
-        <div className="h-fit p-4 md:p-10">
+        <div className="h-fit p-4  md:p-6 max-w-2xl">
             <div
                 id="heading"
                 className="flex flex-col gap-4"
@@ -10,7 +10,7 @@ const InfoPage = () => {
                 <h1 className="text-6xl text-center font-extrabold leading-snug">
                     DAYDEX
                     <span className="block text-3xl md:text-5xl mt-1">
-                        “Minimal and easy to use JOURNAL”
+                        Built to simplify tracking your progress
                     </span>
                 </h1>
 

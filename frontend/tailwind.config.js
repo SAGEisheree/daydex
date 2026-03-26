@@ -44,7 +44,7 @@ export default {
           "--btn-text-case": "lowercase", // Matches the "Start test" look
         },
       },
-      "aqua", 
+      "aqua", "retro"
     ],
   },
 }

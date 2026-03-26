@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
+import Task from './task';
 
 export const totalMoods = 0
 
@@ -8,6 +9,7 @@ const Day = ({ name, day, items, updateTotal }) => {
     // local storage logic ////////////////////////////////////////////////////////////////////////
     const storageKey = `mood-${name}-${day}`;
     const noteTextKey = `noteText-${name}-${day}`;
+    const taskStorageKey = `tasks-${name}-${day}`;
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMoodID, setSelectedMoodID] = useLocalStorage(storageKey, null);
@@ -43,9 +45,9 @@ const Day = ({ name, day, items, updateTotal }) => {
                     id={`modal-${name}-${day}`}
                     className="modal"
                 >
-                    <div className="modal-box h-auto pt-4 pb-0 flex md:w-xl flex-col justify-between">
-                        <div className="mb-3">{name}  {day}</div>
-                        <div className="flex flex-row flex-wrap justify-center">
+                    <div className="modal-box h-auto max-w-4xl pt-4 pb-4 flex flex-col gap-4">
+                        <div className="mb-1 text-lg font-semibold">{name} {day}</div>
+                        <div className="flex flex-row flex-wrap justify-center gap-2">
                             {items.map((item) => {
 
                                 const showBorder = selectedMoodID === item.id;
@@ -77,29 +79,30 @@ const Day = ({ name, day, items, updateTotal }) => {
                                     if (selectedMoodID !== null) updateTotal(-1);
                                     setSelectedMoodID(null);
                                 }}
-                            className='btn btn-ghost bg-base-200'
+                            className='btn btn-ghost bg-base-200 w-24'
                             >
                             None
                         </button>
                     </div>
 
-                    <div>
-                        <div className="flex flex-col max-sm:m-1 m-4 mb-0">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
+                        <div className="flex flex-col">
+                            <div className="mb-2 font-semibold">Notes</div>
                             <textarea
                                 value={noteText}
                                 onChange={(e) => setNoteText(e.target.value)}
                                 placeholder="How was ur day?"
-                                className="border-2 border-gray-600 bg-base-100 max-sm:h-48 h-64 w-fill"
+                                className="min-h-48 w-full rounded-md border-2 border-gray-600 bg-base-100 p-3 md:min-h-72"
                             />
+                        </div>
+                        <Task storageKey={taskStorageKey} title={`Tasks for ${name} ${day}`} />
+                    </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="btn bg-base-200 mb-6 btn-small mt-2"
+                                className="btn bg-base-200 btn-small width-96 mt-3 self-start"
                             >
                                 Done
                             </button>
-
-                        </div>
-                    </div>
                 </div>
                 </dialog >
             )}

@@ -1,0 +1,98 @@
+import React, { useState } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
+
+const Task = ({ storageKey, title }) => {
+  const [tasks, setTasks] = useLocalStorage(storageKey, []);
+  const [taskInput, setTaskInput] = useState('');
+
+  const addTask = () => {
+    const trimmedTask = taskInput.trim();
+
+    if (!trimmedTask) return;
+
+    const taskAlreadyExists = tasks.some(
+      (task) => task.text.toLowerCase() === trimmedTask.toLowerCase()
+    );
+
+    if (taskAlreadyExists) return;
+
+    setTasks([
+      ...tasks,
+      {
+        id: Date.now(),
+        text: trimmedTask,
+        done: false,
+      },
+    ]);
+    setTaskInput('');
+  };
+
+  const toggleTask = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, done: !task.done } : task
+      )
+    );
+  };
+
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  return (
+    <div className="flex flex-col max-sm:m-1 m-4 mb-0 min-w-64 flex-1">
+      <div className="mb-2 font-semibold">{title}</div>
+
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={taskInput}
+          onChange={(e) => setTaskInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              addTask();
+            }
+          }}
+          placeholder="Add a task"
+          className="input input-bordered w-full bg-base-100"
+        />
+        <button onClick={addTask} className="btn bg-base-200">
+          Add
+        </button>
+      </div>
+
+      <div className="mt-3 max-h-64 overflow-y-auto rounded-md border border-base-300 bg-base-100 p-2">
+        {tasks.length === 0 ? (
+          <p className="text-sm opacity-60">No tasks for this day yet.</p>
+        ) : (
+          tasks.map((task) => (
+            <div
+              key={task.id}
+              className="mb-2 flex items-center justify-between rounded-md bg-base-200 px-3 py-2"
+            >
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => toggleTask(task.id)}
+                  className="checkbox checkbox-sm"
+                />
+                <span className={task.done ? 'line-through opacity-60' : ''}>
+                  {task.text}
+                </span>
+              </label>
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="btn btn-ghost btn-xs"
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Task;

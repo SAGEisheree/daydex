@@ -16,7 +16,7 @@ const Month = ({ items, aqua, updateTotal }) => {
     };
 
     return (
-        <div className="relative group/scroller">
+        <div className="relative max-md:scale-95 group/scroller">
             {/* Scroll Buttons */}
             <button
                 onClick={() => scroll('left')}
