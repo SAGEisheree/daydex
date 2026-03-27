@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
+import { useState } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const Task = ({ storageKey, title }) => {
   const [tasks, setTasks] = useLocalStorage(storageKey, []);
-  const [taskInput, setTaskInput] = useState('');
+  const [taskInput, setTaskInput] = useState("");
 
   const addTask = () => {
     const trimmedTask = taskInput.trim();
@@ -24,7 +24,7 @@ const Task = ({ storageKey, title }) => {
         done: false,
       },
     ]);
-    setTaskInput('');
+    setTaskInput("");
   };
 
   const toggleTask = (id) => {
@@ -49,7 +49,7 @@ const Task = ({ storageKey, title }) => {
           value={taskInput}
           onChange={(e) => setTaskInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               addTask();
             }
           }}
@@ -77,7 +77,7 @@ const Task = ({ storageKey, title }) => {
                   onChange={() => toggleTask(task.id)}
                   className="checkbox checkbox-sm"
                 />
-                <span className={task.done ? 'line-through opacity-60' : ''}>
+                <span className={task.done ? "line-through opacity-60" : ""}>
                   {task.text}
                 </span>
               </label>
