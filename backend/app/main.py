@@ -20,13 +20,29 @@ load_dotenv(PROJECT_DIR / ".env")
 load_dotenv(BASE_DIR / ".env")
 
 
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+def get_allowed_origins() -> list[str]:
+    configured_origins = os.getenv("FRONTEND_URLS") or os.getenv("FRONTEND_URL", "")
+    origins = [origin.strip() for origin in configured_origins.split(",") if origin.strip()]
+    defaults = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://daydex.vercel.app",
+    ]
+
+    for default_origin in defaults:
+        if default_origin not in origins:
+            origins.append(default_origin)
+
+    return origins
+
+
+allowed_origins = get_allowed_origins()
 
 app = FastAPI(title="Daydex API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_url],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
