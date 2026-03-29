@@ -1,25 +1,47 @@
 import { useEffect, useRef, useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
 import Task from "./task";
 
-const Day = ({ name, day, items }) => {
-  const storageKey = `mood-${name}-${day}`;
-  const noteTextKey = `noteText-${name}-${day}`;
-  const taskStorageKey = `tasks-${name}-${day}`;
-
+const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, onDeleteTask, cloudEnabled }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedMoodID, setSelectedMoodID] = useLocalStorage(storageKey, null);
-  const [noteText, setNoteText] = useLocalStorage(noteTextKey, "");
+  const [selectedMoodID, setSelectedMoodID] = useState(entry?.mood_id ?? null);
+  const [noteText, setNoteText] = useState(entry?.note ?? "");
+  const [isSaving, setIsSaving] = useState(false);
+  const tasks = entry?.tasks ?? [];
 
   const activeMood = items.find((item) => item.id === selectedMoodID);
   const displayColor = activeMood ? activeMood.color : "bg-base-200";
   const modalRef = useRef(null);
 
   useEffect(() => {
+    setSelectedMoodID(entry?.mood_id ?? null);
+    setNoteText(entry?.note ?? "");
+  }, [entry?.mood_id, entry?.note]);
+
+  useEffect(() => {
     if (isOpen && modalRef.current) {
       modalRef.current.showModal();
     }
   }, [isOpen]);
+
+  const saveEntry = async (nextMoodId, nextNote) => {
+    if (!cloudEnabled) {
+      setSelectedMoodID(nextMoodId);
+      setNoteText(nextNote);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const savedEntry = await onSaveEntry(name, Number(day), {
+        mood_id: nextMoodId,
+        note: nextNote,
+      });
+      setSelectedMoodID(savedEntry.mood_id ?? null);
+      setNoteText(savedEntry.note ?? "");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <>
@@ -51,13 +73,9 @@ const Day = ({ name, day, items }) => {
                     className="flex max-:flex-wrap flex-row m-0 justify-between"
                   >
                     <button
-                      onClick={() => {
-                        if (selectedMoodID === item.id) {
-                          setSelectedMoodID(null);
-                        } else {
-                          setSelectedMoodID(item.id);
-                        }
-                      }}
+                      onClick={() =>
+                        void saveEntry(selectedMoodID === item.id ? null : item.id, noteText)
+                      }
                       className={`btn btn-ghost w-24 ${showBorder ? "border-2 border-black scale-110" : "border-0"} ${item.color}`}
                     >
                       {item.name}
@@ -66,9 +84,7 @@ const Day = ({ name, day, items }) => {
                 );
               })}
               <button
-                onClick={() => {
-                  setSelectedMoodID(null);
-                }}
+                onClick={() => void saveEntry(null, noteText)}
                 className="btn btn-ghost bg-base-200 w-24"
               >
                 None
@@ -81,11 +97,22 @@ const Day = ({ name, day, items }) => {
                 <textarea
                   value={noteText}
                   onChange={(e) => setNoteText(e.target.value)}
+                  onBlur={() => void saveEntry(selectedMoodID, noteText)}
                   placeholder="How was ur day?"
                   className="min-h-48 w-full rounded-md border-2 border-gray-600 bg-base-100 p-3 md:min-h-72"
                 />
+                <p className="mt-2 text-xs opacity-60">
+                  {cloudEnabled ? (isSaving ? "Saving to cloud..." : "Saved to cloud") : "Sign in to sync this day to the cloud."}
+                </p>
               </div>
-              <Task storageKey={taskStorageKey} title={`Tasks for ${name} ${day}`} />
+              <Task
+                tasks={tasks}
+                title={`Tasks for ${name} ${day}`}
+                onAddTask={(text) => onAddTask(name, Number(day), text)}
+                onToggleTask={(taskId, done) => onUpdateTask(name, Number(day), taskId, { done })}
+                onDeleteTask={(taskId) => onDeleteTask(name, Number(day), taskId)}
+                disabled={!cloudEnabled || isSaving}
+              />
             </div>
             <button
               onClick={() => setIsOpen(false)}

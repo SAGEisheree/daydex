@@ -1,11 +1,9 @@
 import { useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
 
-const Task = ({ storageKey, title }) => {
-  const [tasks, setTasks] = useLocalStorage(storageKey, []);
+const Task = ({ tasks, title, onAddTask, onToggleTask, onDeleteTask, disabled }) => {
   const [taskInput, setTaskInput] = useState("");
 
-  const addTask = () => {
+  const addTask = async () => {
     const trimmedTask = taskInput.trim();
 
     if (!trimmedTask) return;
@@ -16,27 +14,8 @@ const Task = ({ storageKey, title }) => {
 
     if (taskAlreadyExists) return;
 
-    setTasks([
-      ...tasks,
-      {
-        id: Date.now(),
-        text: trimmedTask,
-        done: false,
-      },
-    ]);
+    await onAddTask(trimmedTask);
     setTaskInput("");
-  };
-
-  const toggleTask = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, done: !task.done } : task
-      )
-    );
-  };
-
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
   };
 
   return (
@@ -50,13 +29,14 @@ const Task = ({ storageKey, title }) => {
           onChange={(e) => setTaskInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              addTask();
+              void addTask();
             }
           }}
           placeholder="Add a task"
+          disabled={disabled}
           className="input input-bordered w-full bg-base-100"
         />
-        <button onClick={addTask} className="btn bg-base-200">
+        <button onClick={() => void addTask()} disabled={disabled} className="btn bg-base-200">
           Add
         </button>
       </div>
@@ -74,7 +54,8 @@ const Task = ({ storageKey, title }) => {
                 <input
                   type="checkbox"
                   checked={task.done}
-                  onChange={() => toggleTask(task.id)}
+                  onChange={() => onToggleTask(task.id, !task.done)}
+                  disabled={disabled}
                   className="checkbox checkbox-sm"
                 />
                 <span className={task.done ? "line-through opacity-60" : ""}>
@@ -82,7 +63,8 @@ const Task = ({ storageKey, title }) => {
                 </span>
               </label>
               <button
-                onClick={() => deleteTask(task.id)}
+                onClick={() => onDeleteTask(task.id)}
+                disabled={disabled}
                 className="btn btn-ghost btn-xs"
               >
                 Delete

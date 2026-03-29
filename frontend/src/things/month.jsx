@@ -2,7 +2,16 @@ import { useRef } from "react";
 import Day from "./Day";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const Month = ({ items, aqua }) => {
+const Month = ({
+  items,
+  aqua,
+  entriesByKey,
+  onSaveEntry,
+  onAddTask,
+  onUpdateTask,
+  onDeleteTask,
+  cloudEnabled,
+}) => {
   const names = [
     "January",
     "February",
@@ -63,7 +72,18 @@ const Month = ({ items, aqua }) => {
             </div>
             <div className="grid grid-cols-7 ">
               {days.map((day) => (
-                <Day key={`${name}-${day}`} name={name} day={day} items={items} />
+                <Day
+                  key={`${name}-${day}`}
+                  name={name}
+                  day={day}
+                  items={items}
+                  entry={entriesByKey[`${name}-${day}`]}
+                  onSaveEntry={onSaveEntry}
+                  onAddTask={onAddTask}
+                  onUpdateTask={onUpdateTask}
+                  onDeleteTask={onDeleteTask}
+                  cloudEnabled={cloudEnabled}
+                />
               ))}
             </div>
           </div>

@@ -1,19 +1,330 @@
 import { Link } from "react-router";
 import { SunMoon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import Month from "./month.jsx";
 import MoodCard from "./moodCard.jsx";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import InfoPage from "./infopage.jsx";
 import logo from "../assets/logo.svg";
+import {
+  apiRequest,
+  clearStoredToken,
+  getStoredToken,
+  setStoredToken,
+} from "../lib/api.js";
+
+
+const DEFAULT_MOODS = [
+  { name: "SuperGood", color: "bg-emerald-500", percent: 0 },
+  { name: "Good", color: "bg-lime-500", percent: 0 },
+  { name: "Not Bad", color: "bg-orange-500", percent: 0 },
+  { name: "Bad", color: "bg-red-500", percent: 0 },
+];
+
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
+
+
+const entryKey = (month, day) => `${month}-${day}`;
 
 const RealPage = () => {
-  const [items, setItems] = useLocalStorage("mooditems", [
-    { id: 1, name: "SuperGood", color: "bg-emerald-500", percent: 0 },
-    { id: 2, name: "Good", color: "bg-lime-500", percent: 0 },
-    { id: 3, name: "Not Bad", color: "bg-orange-500", percent: 0 },
-    { id: 4, name: "Bad", color: "bg-red-500", percent: 0 },
-  ]);
+  const [items, setItems] = useLocalStorage("mooditems", DEFAULT_MOODS);
   const [aqua, setAqua] = useLocalStorage("aquaState", false);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => getStoredToken());
+  const [authReady, setAuthReady] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [syncStatus, setSyncStatus] = useState("local");
+  const [entriesByKey, setEntriesByKey] = useState({});
+  const signInContainerRef = useRef(null);
+  const googleInitializedRef = useRef(false);
+  const renderedThemeRef = useRef(null);
+  const authCallbackRef = useRef(null);
+
+  authCallbackRef.current = async (response) => {
+    try {
+      const authResponse = await apiRequest("/auth/google", {
+        method: "POST",
+        body: { credential: response.credential },
+      });
+
+      setStoredToken(authResponse.access_token);
+      setToken(authResponse.access_token);
+      setUser(authResponse.user);
+      setAuthError("");
+      setSyncStatus("cloud");
+    } catch (error) {
+      setAuthError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    let ignore = false;
+
+    const bootstrapUser = async () => {
+      try {
+        const me = await apiRequest("/auth/me", { token });
+        if (!ignore) {
+          setUser(me);
+        }
+
+        const remoteMoods = await apiRequest("/moods", { token });
+        const remoteEntries = await apiRequest("/entries", { token });
+        if (!ignore) {
+          if (remoteMoods.length === 0) {
+            const seededMoods = await Promise.all(
+              DEFAULT_MOODS.map((mood) =>
+                apiRequest("/moods", { method: "POST", token, body: mood })
+              )
+            );
+            setItems(seededMoods);
+          } else {
+            setItems(remoteMoods);
+          }
+          const nextEntries = Object.fromEntries(
+            remoteEntries.map((entry) => [entryKey(entry.month, entry.day), entry])
+          );
+          setEntriesByKey(nextEntries);
+          setSyncStatus("cloud");
+        }
+      } catch {
+        clearStoredToken();
+        if (!ignore) {
+          setToken(null);
+          setUser(null);
+          setSyncStatus("local");
+          setEntriesByKey({});
+        }
+      }
+    };
+
+    bootstrapUser();
+
+    return () => {
+      ignore = true;
+    };
+  }, [token, setItems]);
+
+  useEffect(() => {
+    const googleApi = window.google?.accounts?.id;
+    const container = signInContainerRef.current;
+    const buttonTheme = aqua ? "filled_black" : "outline";
+
+    if (!GOOGLE_CLIENT_ID) {
+      setAuthReady(false);
+      setAuthError("Missing VITE_GOOGLE_CLIENT_ID in frontend env.");
+      return;
+    }
+
+    if (!googleApi || !container) {
+      const timer = window.setTimeout(() => {
+        setAuthReady(Boolean(window.google?.accounts?.id));
+      }, 500);
+      return () => window.clearTimeout(timer);
+    }
+
+    setAuthError("");
+    setAuthReady(true);
+
+    if (!googleInitializedRef.current) {
+      googleApi.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => authCallbackRef.current?.(response),
+      });
+      googleInitializedRef.current = true;
+    }
+
+    if (!user && renderedThemeRef.current !== buttonTheme) {
+      container.innerHTML = "";
+      googleApi.renderButton(container, {
+        theme: buttonTheme,
+        size: "large",
+        width: 260,
+        text: "signin_with",
+        shape: "pill",
+      });
+      renderedThemeRef.current = buttonTheme;
+    }
+
+    if (user) {
+      container.innerHTML = "";
+      renderedThemeRef.current = null;
+    }
+  }, [aqua, user]);
+
+  const persistItems = async (nextItems) => {
+    setItems(nextItems);
+
+    if (!token) {
+      setSyncStatus("local");
+      return;
+    }
+
+    try {
+      const existingIds = new Set(items.map((item) => item.id).filter(Boolean));
+      const nextIds = new Set(nextItems.map((item) => item.id).filter(Boolean));
+
+      await Promise.all(
+        nextItems.map((item) => {
+          if (existingIds.has(item.id)) {
+            return apiRequest(`/moods/${item.id}`, {
+              method: "PUT",
+              token,
+              body: {
+                name: item.name,
+                color: item.color,
+                percent: item.percent,
+              },
+            });
+          }
+
+          return apiRequest("/moods", {
+            method: "POST",
+            token,
+            body: {
+              name: item.name,
+              color: item.color,
+              percent: item.percent,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        items
+          .filter((item) => item.id && !nextIds.has(item.id))
+          .map((item) =>
+            apiRequest(`/moods/${item.id}`, {
+              method: "DELETE",
+              token,
+            })
+          )
+      );
+
+      const refreshed = await apiRequest("/moods", { token });
+      setItems(refreshed);
+      setSyncStatus("cloud");
+    } catch (error) {
+      setAuthError(error.message);
+      setSyncStatus("local");
+    }
+  };
+
+  const handleLogout = () => {
+    clearStoredToken();
+    setToken(null);
+    setUser(null);
+    setAuthError("");
+    setSyncStatus("local");
+    setEntriesByKey({});
+  };
+
+  const upsertEntryState = (entry) => {
+    setEntriesByKey((current) => ({
+      ...current,
+      [entryKey(entry.month, entry.day)]: entry,
+    }));
+    return entry;
+  };
+
+  const saveEntry = async (month, day, payload) => {
+    if (!token) {
+      throw new Error("Sign in to sync day data.");
+    }
+
+    const savedEntry = await apiRequest(`/entries/${month}/${day}`, {
+      method: "PUT",
+      token,
+      body: payload,
+    });
+    return upsertEntryState(savedEntry);
+  };
+
+  const addTask = async (month, day, text) => {
+    if (!token) {
+      throw new Error("Sign in to sync tasks.");
+    }
+
+    const createdTask = await apiRequest(`/entries/${month}/${day}/tasks`, {
+      method: "POST",
+      token,
+      body: { text },
+    });
+
+    setEntriesByKey((current) => {
+      const currentEntry = current[entryKey(month, day)] ?? {
+        month,
+        day,
+        mood_id: null,
+        note: "",
+        tasks: [],
+      };
+      return {
+        ...current,
+        [entryKey(month, day)]: {
+          ...currentEntry,
+          tasks: [...(currentEntry.tasks ?? []), createdTask],
+        },
+      };
+    });
+  };
+
+  const updateTask = async (month, day, taskId, updates) => {
+    if (!token) {
+      throw new Error("Sign in to sync tasks.");
+    }
+
+    const updatedTask = await apiRequest(`/tasks/${taskId}`, {
+      method: "PATCH",
+      token,
+      body: updates,
+    });
+
+    setEntriesByKey((current) => {
+      const currentEntry = current[entryKey(month, day)];
+      if (!currentEntry) {
+        return current;
+      }
+      return {
+        ...current,
+        [entryKey(month, day)]: {
+          ...currentEntry,
+          tasks: currentEntry.tasks.map((task) =>
+            task.id === taskId ? updatedTask : task
+          ),
+        },
+      };
+    });
+  };
+
+  const deleteTask = async (month, day, taskId) => {
+    if (!token) {
+      throw new Error("Sign in to sync tasks.");
+    }
+
+    await apiRequest(`/tasks/${taskId}`, {
+      method: "DELETE",
+      token,
+    });
+
+    setEntriesByKey((current) => {
+      const currentEntry = current[entryKey(month, day)];
+      if (!currentEntry) {
+        return current;
+      }
+      return {
+        ...current,
+        [entryKey(month, day)]: {
+          ...currentEntry,
+          tasks: currentEntry.tasks.filter((task) => task.id !== taskId),
+        },
+      };
+    });
+  };
 
   return (
     <div>
@@ -31,6 +342,9 @@ const RealPage = () => {
               alt="Daydex Logo"
             />
             <div className="flex flex-row items-center gap-3">
+              <div className="hidden md:block text-xs uppercase tracking-[0.25em] opacity-60">
+                {syncStatus === "cloud" ? "Cloud Sync On" : "Local Only"}
+              </div>
               <Link to="/blog">
                 <button className="btn btn-ghost bg-base-300/70 rounded-xl px-4">
                   Dev logs
@@ -50,17 +364,32 @@ const RealPage = () => {
 
         <div className="flex flex-row max-md:flex-col justify-center items-start gap-10 md:gap-20">
           <div className="text-left border-2 border-base-300 bg-base-300/20 rounded-md backdrop-blur-sm">
-            <InfoPage />
+            <InfoPage
+              user={user}
+              authReady={authReady}
+              authError={authError}
+              signInContainerRef={signInContainerRef}
+              onLogout={handleLogout}
+            />
           </div>
           <div className="h-fit scale-90 md:ml-20">
-            <MoodCard items={items} setItems={setItems} />
+            <MoodCard items={items} setItems={persistItems} />
           </div>
         </div>
 
         <div className="flex flex-col mt-10 space-y-10 backdrop-blur-sm">
           <div className="md:ml-20 md:mr-20    bg-base-300/50 rounded-xl shadow-xl pb-4">
             <div className="text-center font-bold text-3xl py-4">Months</div>
-            <Month items={items} aqua={aqua} />
+            <Month
+              items={items}
+              aqua={aqua}
+              entriesByKey={entriesByKey}
+              onSaveEntry={saveEntry}
+              onAddTask={addTask}
+              onUpdateTask={updateTask}
+              onDeleteTask={deleteTask}
+              cloudEnabled={Boolean(token)}
+            />
           </div>
         </div>
 
