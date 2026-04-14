@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const Task = ({ tasks, title, onAddTask, onToggleTask, onDeleteTask, disabled }) => {
   const [taskInput, setTaskInput] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
-  const addTask = async () => {
+  const addTask = useCallback(async () => {
     const trimmedTask = taskInput.trim();
 
-    if (!trimmedTask) return;
+    if (!trimmedTask || isAdding) return;
 
     const taskAlreadyExists = tasks.some(
       (task) => task.text.toLowerCase() === trimmedTask.toLowerCase()
@@ -14,9 +15,16 @@ const Task = ({ tasks, title, onAddTask, onToggleTask, onDeleteTask, disabled })
 
     if (taskAlreadyExists) return;
 
-    await onAddTask(trimmedTask);
-    setTaskInput("");
-  };
+    setIsAdding(true);
+    try {
+      await onAddTask(trimmedTask);
+      setTaskInput("");
+    } catch (error) {
+      console.error("Failed to add task:", error);
+    } finally {
+      setIsAdding(false);
+    }
+  }, [taskInput, isAdding, tasks, onAddTask]);
 
   return (
     <div className="flex flex-col max-sm:m-1 m-4 mb-0 min-w-64 flex-1">
@@ -28,16 +36,16 @@ const Task = ({ tasks, title, onAddTask, onToggleTask, onDeleteTask, disabled })
           value={taskInput}
           onChange={(e) => setTaskInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !isAdding) {
               void addTask();
             }
           }}
           placeholder="Add a task"
-          disabled={disabled}
+          disabled={disabled || isAdding}
           className="input input-bordered w-full bg-base-100"
         />
-        <button onClick={() => void addTask()} disabled={disabled} className="btn bg-base-200">
-          Add
+        <button onClick={() => void addTask()} disabled={disabled || isAdding} className="btn bg-base-200">
+          {isAdding ? "Adding..." : "Add"}
         </button>
       </div>
 

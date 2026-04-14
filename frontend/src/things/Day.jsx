@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import Task from "./task";
 
 const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, onDeleteTask, cloudEnabled }) => {
@@ -6,6 +6,7 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
   const [selectedMoodID, setSelectedMoodID] = useState(entry?.mood_id ?? null);
   const [noteText, setNoteText] = useState(entry?.note ?? "");
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const tasks = entry?.tasks ?? [];
 
   const activeMood = items.find((item) => item.id === selectedMoodID);
@@ -23,14 +24,24 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
     }
   }, [isOpen]);
 
-  const saveEntry = async (nextMoodId, nextNote) => {
+  const saveEntry = useCallback(async (nextMoodId, nextNote) => {
+    if (nextMoodId === (entry?.mood_id ?? null) && nextNote === (entry?.note ?? "")) {
+      return;
+    }
+
     if (!cloudEnabled) {
       setSelectedMoodID(nextMoodId);
       setNoteText(nextNote);
       return;
     }
 
+    const previousMoodId = entry?.mood_id ?? null;
+    const previousNote = entry?.note ?? "";
+
+    setSelectedMoodID(nextMoodId);
+    setNoteText(nextNote);
     setIsSaving(true);
+    setSaveError("");
     try {
       const savedEntry = await onSaveEntry(name, Number(day), {
         mood_id: nextMoodId,
@@ -38,10 +49,14 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
       });
       setSelectedMoodID(savedEntry.mood_id ?? null);
       setNoteText(savedEntry.note ?? "");
+    } catch (error) {
+      setSelectedMoodID(previousMoodId);
+      setNoteText(previousNote);
+      setSaveError(error.message);
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [entry?.mood_id, entry?.note, cloudEnabled, name, day, onSaveEntry]);
 
   return (
     <>
@@ -102,7 +117,9 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
                   className="min-h-48 w-full rounded-md border-2 border-gray-600 bg-base-100 p-3 md:min-h-72"
                 />
                 <p className="mt-2 text-xs opacity-60">
-                  {cloudEnabled ? (isSaving ? "Saving to cloud..." : "Saved to cloud") : "Sign in to sync this day to the cloud."}
+                  {cloudEnabled
+                    ? saveError || (isSaving ? "Saving to cloud..." : "Saved to cloud")
+                    : "Sign in to sync this day to the cloud."}
                 </p>
               </div>
               <Task
@@ -111,7 +128,7 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
                 onAddTask={(text) => onAddTask(name, Number(day), text)}
                 onToggleTask={(taskId, done) => onUpdateTask(name, Number(day), taskId, { done })}
                 onDeleteTask={(taskId) => onDeleteTask(name, Number(day), taskId)}
-                disabled={!cloudEnabled || isSaving}
+                disabled={!cloudEnabled}
               />
             </div>
             <button
@@ -127,4 +144,4 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
   );
 };
 
-export default Day;
+export default memo(Day);

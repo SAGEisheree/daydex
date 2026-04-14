@@ -249,12 +249,8 @@ const RealPage = () => {
       throw new Error("Sign in to sync tasks.");
     }
 
-    const createdTask = await apiRequest(`/entries/${month}/${day}/tasks`, {
-      method: "POST",
-      token,
-      body: { text },
-    });
-
+    // Create optimistic update first for instant UI feedback
+    const optimisticId = `temp-${Date.now()}`;
     setEntriesByKey((current) => {
       const currentEntry = current[entryKey(month, day)] ?? {
         month,
@@ -267,10 +263,47 @@ const RealPage = () => {
         ...current,
         [entryKey(month, day)]: {
           ...currentEntry,
-          tasks: [...(currentEntry.tasks ?? []), createdTask],
+          tasks: [...(currentEntry.tasks ?? []), { id: optimisticId, text, done: false }],
         },
       };
     });
+
+    try {
+      const createdTask = await apiRequest(`/entries/${month}/${day}/tasks`, {
+        method: "POST",
+        token,
+        body: { text },
+      });
+
+      // Replace optimistic with real task
+      setEntriesByKey((current) => {
+        const currentEntry = current[entryKey(month, day)];
+        if (!currentEntry) return current;
+        return {
+          ...current,
+          [entryKey(month, day)]: {
+            ...currentEntry,
+            tasks: currentEntry.tasks.map((task) =>
+              task.id === optimisticId ? createdTask : task
+            ),
+          },
+        };
+      });
+    } catch (error) {
+      // Remove optimistic update on error
+      setEntriesByKey((current) => {
+        const currentEntry = current[entryKey(month, day)];
+        if (!currentEntry) return current;
+        return {
+          ...current,
+          [entryKey(month, day)]: {
+            ...currentEntry,
+            tasks: currentEntry.tasks.filter((task) => task.id !== optimisticId),
+          },
+        };
+      });
+      throw error;
+    }
   };
 
   const updateTask = async (month, day, taskId, updates) => {
@@ -278,27 +311,68 @@ const RealPage = () => {
       throw new Error("Sign in to sync tasks.");
     }
 
-    const updatedTask = await apiRequest(`/tasks/${taskId}`, {
-      method: "PATCH",
-      token,
-      body: updates,
-    });
-
+    // Optimistic update - modify UI immediately
+    let previousValues = {};
     setEntriesByKey((current) => {
       const currentEntry = current[entryKey(month, day)];
-      if (!currentEntry) {
-        return current;
+      if (!currentEntry) return current;
+      
+      const taskToUpdate = currentEntry.tasks.find((t) => t.id === taskId);
+      if (taskToUpdate) {
+        previousValues = { ...taskToUpdate };
       }
+      
       return {
         ...current,
         [entryKey(month, day)]: {
           ...currentEntry,
           tasks: currentEntry.tasks.map((task) =>
-            task.id === taskId ? updatedTask : task
+            task.id === taskId ? { ...task, ...updates } : task
           ),
         },
       };
     });
+
+    try {
+      const updatedTask = await apiRequest(`/tasks/${taskId}`, {
+        method: "PATCH",
+        token,
+        body: updates,
+      });
+
+      // Sync with server response
+      setEntriesByKey((current) => {
+        const currentEntry = current[entryKey(month, day)];
+        if (!currentEntry) return current;
+        return {
+          ...current,
+          [entryKey(month, day)]: {
+            ...currentEntry,
+            tasks: currentEntry.tasks.map((task) =>
+              task.id === taskId ? updatedTask : task
+            ),
+          },
+        };
+      });
+    } catch (error) {
+      // Revert optimistic update on error
+      if (Object.keys(previousValues).length > 0) {
+        setEntriesByKey((current) => {
+          const currentEntry = current[entryKey(month, day)];
+          if (!currentEntry) return current;
+          return {
+            ...current,
+            [entryKey(month, day)]: {
+              ...currentEntry,
+              tasks: currentEntry.tasks.map((task) =>
+                task.id === taskId ? previousValues : task
+              ),
+            },
+          };
+        });
+      }
+      throw error;
+    }
   };
 
   const deleteTask = async (month, day, taskId) => {
@@ -306,16 +380,12 @@ const RealPage = () => {
       throw new Error("Sign in to sync tasks.");
     }
 
-    await apiRequest(`/tasks/${taskId}`, {
-      method: "DELETE",
-      token,
-    });
-
+    // Store the deleted task in case we need to restore it
+    let deletedTask;
     setEntriesByKey((current) => {
       const currentEntry = current[entryKey(month, day)];
-      if (!currentEntry) {
-        return current;
-      }
+      if (!currentEntry) return current;
+      deletedTask = currentEntry.tasks.find((t) => t.id === taskId);
       return {
         ...current,
         [entryKey(month, day)]: {
@@ -324,6 +394,29 @@ const RealPage = () => {
         },
       };
     });
+
+    try {
+      await apiRequest(`/tasks/${taskId}`, {
+        method: "DELETE",
+        token,
+      });
+    } catch (error) {
+      // Restore task on error
+      if (deletedTask) {
+        setEntriesByKey((current) => {
+          const currentEntry = current[entryKey(month, day)];
+          if (!currentEntry) return current;
+          return {
+            ...current,
+            [entryKey(month, day)]: {
+              ...currentEntry,
+              tasks: [...currentEntry.tasks, deletedTask],
+            },
+          };
+        });
+      }
+      throw error;
+    }
   };
 
   return (

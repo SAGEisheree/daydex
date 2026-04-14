@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Pencil } from "lucide-react";
 
 const MoodCard = ({ items, setItems }) => {
-  const colors = [
+  const colors = useMemo(() => [
     "bg-emerald-500",
     "bg-lime-500",
     "bg-yellow-500",
@@ -15,14 +15,14 @@ const MoodCard = ({ items, setItems }) => {
     "bg-blue-500",
     "bg-teal-500",
     "bg-green-500",
-  ];
+  ], []);
 
-  const updateItem = (id, updates) => {
+  const updateItem = useCallback((id, updates) => {
     const newItems = items.map((item) =>
       item.id === id ? { ...item, ...updates } : item
     );
     setItems(newItems);
-  };
+  }, [items, setItems]);
 
   const [editingId, setEditingId] = useState(null);
 
