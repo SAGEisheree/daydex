@@ -8,19 +8,19 @@ const InfoPage = ({ user, authReady, authError, signInContainerRef, onLogout }) 
         <h1 className="text-6xl text-center font-extrabold leading-snug">
           DAYDEX
           <span className="block text-3xl md:text-5xl mt-1">
-            Built to simplify tracking your progress
+            Built to simplify tracking your progress.
           </span>
         </h1>
 
         <div className="space-y-3 text-center text-base md:text-lg">
           <p>
-            <span className="font-semibold">DAYDEX</span> helps storing your memories in a simple format
+            <span className="font-semibold">DAYDEX</span> Daily Journaling made easy.
             <span className="block text-xs md:text-sm opacity-70 mt-1">
-              NOTE: Still in building phase. Check dev logs for more.
+              NOTE:  the server to run google sign-in takes about 2 mins to wake up.So pease reload site after 2 mins. will soon shift to serverless function to avoid this.
             </span>
           </p>
           <p className="font-medium">
-            Click on any day to assign notes and mood colors.
+            Click on any day to assign notes, colors and todo list.
           </p>
           <div className="rounded-2xl border border-base-300 bg-base-100/70 p-4 text-left shadow-sm">
             <div className="text-sm uppercase tracking-[0.3em] opacity-60">Cloud Sync</div>
