@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.db import init_db
-from app.schemas import HealthResponse
-from routes.auth import router as auth_router
-from routes.entries import router as entries_router
-from routes.entries import task_router
-from routes.moods import router as moods_router
+from backend.app.db import init_db
+from backend.app.schemas import HealthResponse
+from backend.routes.auth import router as auth_router
+from backend.routes.entries import router as entries_router
+from backend.routes.entries import task_router
+from backend.routes.moods import router as moods_router
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]

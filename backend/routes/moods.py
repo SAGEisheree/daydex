@@ -2,10 +2,10 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pymongo.database import Database
 
-from app.db import get_db
-from app.models import MOOD_COLLECTION, serialize_mood, utc_now
-from app.schemas import MoodCreate, MoodOut, MoodUpdate
-from routes.auth import get_current_user
+from backend.app.db import get_db
+from backend.app.models import MOOD_COLLECTION, serialize_mood, utc_now
+from backend.app.schemas import MoodCreate, MoodOut, MoodUpdate
+from backend.routes.auth import get_current_user
 
 
 router = APIRouter(prefix="/moods", tags=["moods"])

@@ -10,9 +10,9 @@ from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from pymongo.database import Database
 
-from app.db import BASE_DIR, PROJECT_DIR, get_db
-from app.models import USER_COLLECTION, serialize_user, utc_now
-from app.schemas import GoogleAuthRequest, TokenResponse, UserOut
+from backend.app.db import BASE_DIR, PROJECT_DIR, get_db
+from backend.app.models import USER_COLLECTION, serialize_user, utc_now
+from backend.app.schemas import GoogleAuthRequest, TokenResponse, UserOut
 
 
 load_dotenv(PROJECT_DIR / ".env")

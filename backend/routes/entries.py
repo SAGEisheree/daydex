@@ -2,8 +2,8 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pymongo.database import Database
 
-from app.db import get_db
-from app.models import (
+from backend.app.db import get_db
+from backend.app.models import (
     DAY_ENTRY_COLLECTION,
     MOOD_COLLECTION,
     TASK_COLLECTION,
@@ -11,8 +11,8 @@ from app.models import (
     serialize_task,
     utc_now,
 )
-from app.schemas import DayEntryOut, DayEntryUpsert, TaskCreate, TaskOut, TaskUpdate
-from routes.auth import get_current_user
+from backend.app.schemas import DayEntryOut, DayEntryUpsert, TaskCreate, TaskOut, TaskUpdate
+from backend.routes.auth import get_current_user
 
 
 router = APIRouter(prefix="/entries", tags=["entries"])
