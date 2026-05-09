@@ -7,6 +7,7 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
   const [noteText, setNoteText] = useState(entry?.note ?? "");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
   const tasks = entry?.tasks ?? [];
 
   const activeMood = items.find((item) => item.id === selectedMoodID);
@@ -23,6 +24,15 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
       modalRef.current.showModal();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!copyStatus) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => setCopyStatus(""), 2000);
+    return () => window.clearTimeout(timer);
+  }, [copyStatus]);
 
   const saveEntry = useCallback(async (nextMoodId, nextNote) => {
     if (nextMoodId === (entry?.mood_id ?? null) && nextNote === (entry?.note ?? "")) {
@@ -57,6 +67,29 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
       setIsSaving(false);
     }
   }, [entry?.mood_id, entry?.note, cloudEnabled, name, day, onSaveEntry]);
+
+  const copyAsText = useCallback(async () => {
+    const moodLine = activeMood ? activeMood.name : "No mood selected";
+    const noteLine = noteText.trim() || "No notes";
+    const taskLines = tasks.length > 0
+      ? tasks.map((task) => `${task.done ? "✅" : "❌"} ${task.text}`).join("\n")
+      : "No tasks";
+
+    const textToCopy = [
+      `Todays mood: ${moodLine}`,
+      "",
+      noteLine,
+      "",
+      taskLines,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopyStatus("Copied");
+    } catch {
+      setCopyStatus("Copy failed");
+    }
+  }, [activeMood, day, name, noteText, tasks]);
 
   return (
     <>
@@ -137,6 +170,17 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
             >
               Done
             </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => void copyAsText()}
+                className="btn bg-base-200 btn-small self-start"
+              >
+                Copy as text
+              </button>
+              {copyStatus && (
+                <p className="text-sm opacity-70">{copyStatus}</p>
+              )}
+            </div>
           </div>
         </dialog>
       )}
