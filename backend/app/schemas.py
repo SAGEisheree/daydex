@@ -78,6 +78,26 @@ class TaskOut(BaseModel):
     updated_at: datetime | None = None
 
 
+class HabitCreate(BaseModel):
+    text: str = Field(min_length=1, max_length=200)
+
+
+class HabitUpdate(BaseModel):
+    text: str | None = Field(default=None, min_length=1, max_length=200)
+    done: bool | None = None
+
+
+class HabitOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    text: str
+    done: bool
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
 class DayEntryUpsert(BaseModel):
     mood_id: str | None = None
     note: str = Field(default="", max_length=5000)

@@ -10,6 +10,7 @@ from backend.app.schemas import HealthResponse
 from backend.routes.auth import router as auth_router
 from backend.routes.entries import router as entries_router
 from backend.routes.entries import task_router
+from backend.routes.habits import router as habits_router
 from backend.routes.moods import router as moods_router
 
 
@@ -63,3 +64,4 @@ app.include_router(auth_router)
 app.include_router(moods_router)
 app.include_router(entries_router)
 app.include_router(task_router)
+app.include_router(habits_router)

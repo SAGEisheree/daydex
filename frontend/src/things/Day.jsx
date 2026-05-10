@@ -160,6 +160,7 @@ const Day = ({ name, day, items, entry, onSaveEntry, onAddTask, onUpdateTask, on
                 title={`Tasks for ${name} ${day}`}
                 onAddTask={(text) => onAddTask(name, Number(day), text)}
                 onToggleTask={(taskId, done) => onUpdateTask(name, Number(day), taskId, { done })}
+                onEditTask={(taskId, text) => onUpdateTask(name, Number(day), taskId, { text })}
                 onDeleteTask={(taskId) => onDeleteTask(name, Number(day), taskId)}
                 disabled={!cloudEnabled}
               />

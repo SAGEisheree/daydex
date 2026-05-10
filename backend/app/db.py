@@ -33,9 +33,11 @@ def init_db() -> None:
     moods = db["moods"]
     day_entries = db["day_entries"]
     tasks = db["tasks"]
+    habits = db["habits"]
 
     users.create_index("google_sub", unique=True)
     users.create_index("email", unique=True, sparse=True)
     moods.create_index([("user_id", 1), ("name", 1)], unique=True)
     day_entries.create_index([("user_id", 1), ("month", 1), ("day", 1)], unique=True)
     tasks.create_index([("day_entry_id", 1)])
+    habits.create_index([("user_id", 1), ("created_at", 1)])

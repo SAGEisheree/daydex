@@ -3,6 +3,7 @@ import { SunMoon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Month from "./month.jsx";
 import MoodCard from "./moodCard.jsx";
+import DailyHabits from "./habits.jsx";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import InfoPage from "./infopage.jsx";
 import logo from "../assets/logo.svg";
@@ -494,6 +495,7 @@ const RealPage = () => {
               cloudEnabled={Boolean(token)}
             />
           </div>
+          <DailyHabits token={token} />
         </div>
 
         <div className="flex flex-col h-10 border-2 border-base-300 items-center justify-center mt-16 mb-6 gap-4">

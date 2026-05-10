@@ -8,6 +8,7 @@ USER_COLLECTION = "users"
 MOOD_COLLECTION = "moods"
 DAY_ENTRY_COLLECTION = "day_entries"
 TASK_COLLECTION = "tasks"
+HABIT_COLLECTION = "habits"
 
 
 def utc_now() -> datetime:
@@ -66,6 +67,17 @@ def serialize_day_entry(document: dict[str, Any], tasks: list[dict[str, Any]] | 
         "mood_id": object_id_str(document.get("mood_id")),
         "note": document.get("note", ""),
         "tasks": tasks or [],
+        "created_at": document.get("created_at"),
+        "updated_at": document.get("updated_at"),
+    }
+
+
+def serialize_habit(document: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": object_id_str(document["_id"]),
+        "user_id": object_id_str(document["user_id"]),
+        "text": document["text"],
+        "done": document.get("done", False),
         "created_at": document.get("created_at"),
         "updated_at": document.get("updated_at"),
     }
