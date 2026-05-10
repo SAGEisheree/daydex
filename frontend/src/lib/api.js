@@ -33,11 +33,20 @@ export async function apiRequest(path, { method = "GET", token, body } = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (error) {
+    const networkError = new Error("Unable to reach the server. Please try again.");
+    networkError.cause = error;
+    networkError.isNetworkError = true;
+    throw networkError;
+  }
 
   if (!response.ok) {
     let message = "Request failed";
@@ -49,7 +58,9 @@ export async function apiRequest(path, { method = "GET", token, body } = {}) {
       message = response.statusText || message;
     }
 
-    throw new Error(message);
+    const requestError = new Error(message);
+    requestError.status = response.status;
+    throw requestError;
   }
 
   if (response.status === 204) {

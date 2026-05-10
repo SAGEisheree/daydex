@@ -91,13 +91,23 @@ const RealPage = () => {
           setEntriesByKey(nextEntries);
           setSyncStatus("cloud");
         }
-      } catch {
-        clearStoredToken();
+      } catch (error) {
+        const shouldLogout = error?.status === 401 || error?.status === 403;
+
+        if (shouldLogout) {
+          clearStoredToken();
+        }
+
         if (!ignore) {
-          setToken(null);
-          setUser(null);
+          if (shouldLogout) {
+            setToken(null);
+            setUser(null);
+            setEntriesByKey({});
+            setAuthError("Your session expired. Please sign in again.");
+          } else {
+            setAuthError(error?.message ?? "Unable to restore your session right now.");
+          }
           setSyncStatus("local");
-          setEntriesByKey({});
         }
       }
     };
